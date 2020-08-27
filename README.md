@@ -1,0 +1,2 @@
+# synba
+Discord Productivity Bot
