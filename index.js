@@ -36,10 +36,6 @@ client.on('message', msg => {
         userInfo(msg); 
         return;
     }
-    if (msg.content === `${prefix}trump`) {
-        getRandomTrumpQuote(msg); 
-        return;
-    }
     if (msg.content === `${prefix}chuck-norris`) {
         getChuckJoke(msg); 
         return;
