@@ -3,7 +3,7 @@ const { token, prefix, nasa_key } = require("./config.json");
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const commands = ['!commands', '!ping', '!server', '!user-info', '!chuck-norris', '!nasa']; 
+const commands = ['!commands', '!ping', '!server', '!userinfo', '!chuck-norris', '!nasa']; 
 
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
@@ -12,37 +12,40 @@ client.on('ready', async () => {
 });
 
 client.on('message', async message => {
+    if (message.author.bot) return;
+    let messageArray = message.content.split(' ');
+    let command = messageArray[0];
+    let args = messageArray.slice(1);
+    console.log('messageArray', messageArray);
+    console.log('command', command);
+    console.log('args', args);
+    if (!command.startsWith(prefix)) return;
 
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-
-    const args = message.content.slice(prefix.length).split(' ');
-    console.log('args', args);  
-
-    if (message.content === `${prefix}commands`) {
+    if (command === `${prefix}commands`) {
         getCommands(message); 
         return;
     }
-    if (message.content === `${prefix}food`) {
+    if (command === `${prefix}food`) {
         message.reply('GO EAT TACOS'); 
         return;
     }
-    if (message.content === `${prefix}ping`) {
+    if (command === `${prefix}ping`) {
         ping(message); 
         return;
     }
-    if (message.content === `${prefix}server`) {
+    if (command === `${prefix}server`) {
         server(message); 
         return;
     }
-    if (message.content === `${prefix}user-info`) {
+    if (command === `${prefix}userinfo`) {
         userInfo(message); 
         return;
     }
-    if (message.content === `${prefix}chuck-norris`) {
+    if (command === `${prefix}chuck-norris`) {
         getChuckJoke(message); 
         return;
     }
-    if (message.content === `${prefix}nasa`) {
+    if (command === `${prefix}nasa`) {
         getNasaPicOfDay(message); 
         return;
     }
@@ -220,12 +223,12 @@ async function getNasaPicOfDay(msg) {
     }).on("error", (err) => {
     console.log("Error: " + err.message);
     });
+}
 
-    // Login
-    try {
-        client.login(token);
-    }
-    catch (err) {
-        console.log(err); 
-    }
+// Login
+try {
+    client.login(token);
+}
+catch (err) {
+    console.log(err); 
 }
