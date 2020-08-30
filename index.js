@@ -5,57 +5,52 @@ const client = new Discord.Client();
 
 const commands = ['!commands', '!ping', '!server', '!user-info', '!chuck-norris', '!nasa']; 
 
-client.on('ready', () => {
+client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}!`);
+    let link = await client.generateInvite(["ADMINISTRATOR"]);
+    console.log(link);
 });
 
-client.on('message', msg => {
+client.on('message', async message => {
 
-    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = msg.content.slice(prefix.length).split(' ');
+    const args = message.content.slice(prefix.length).split(' ');
     console.log('args', args);  
 
-    if (msg.content === `${prefix}commands`) {
-        getCommands(msg); 
+    if (message.content === `${prefix}commands`) {
+        getCommands(message); 
         return;
     }
-    if (msg.content === `${prefix}food`) {
-        msg.reply('GO EAT TACOS'); 
+    if (message.content === `${prefix}food`) {
+        message.reply('GO EAT TACOS'); 
         return;
     }
-    if (msg.content === `${prefix}ping`) {
-        ping(msg); 
+    if (message.content === `${prefix}ping`) {
+        ping(message); 
         return;
     }
-    if (msg.content === `${prefix}server`) {
-        server(msg); 
+    if (message.content === `${prefix}server`) {
+        server(message); 
         return;
     }
-    if (msg.content === `${prefix}user-info`) {
-        userInfo(msg); 
+    if (message.content === `${prefix}user-info`) {
+        userInfo(message); 
         return;
     }
-    if (msg.content === `${prefix}chuck-norris`) {
-        getChuckJoke(msg); 
+    if (message.content === `${prefix}chuck-norris`) {
+        getChuckJoke(message); 
         return;
     }
-    if (msg.content === `${prefix}nasa`) {
-        getNasaPicOfDay(msg); 
+    if (message.content === `${prefix}nasa`) {
+        getNasaPicOfDay(message); 
         return;
     }
 });
 
-client.on('messageDelete', msg => {
-    console.log('Message Deleted', msg); 
+client.on('messageDelete', async message => {
+    console.log('Message Deleted', message); 
 });
-
-try {
-    client.login(token);
-}
-catch (err) {
-    console.log(err); 
-}
 
 async function getCommands(msg) {
     try {
@@ -225,4 +220,12 @@ async function getNasaPicOfDay(msg) {
     }).on("error", (err) => {
     console.log("Error: " + err.message);
     });
+
+    // Login
+    try {
+        client.login(token);
+    }
+    catch (err) {
+        console.log(err); 
+    }
 }
