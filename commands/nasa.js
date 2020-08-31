@@ -43,13 +43,13 @@ module.exports.run = async (bot, message, args) => {
               .attachFiles(['./assets/robot.png'])
               .setThumbnail('attachment://robot.png')
               .setColor('#F7931E')
-              .setURL('https://apod.nasa.gov/apod/astropix.html')
               .setAuthor(
                 'syntaks.io',
                 'http://syntaks.io/img/blueLogo.png',
                 'http://syntaks.io'
               )
               .setTitle(json.title)
+              .setURL('https://apod.nasa.gov/apod/astropix.html')
               .setDescription(description)
               .addField('Description', explanation)
               .setImage(json.hdurl)
