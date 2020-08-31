@@ -2,11 +2,13 @@
 Discord Productivity Bot
 
 You will need to create a config.json file in the root directory:
+```
 {
     "token" : "<YOUR_BOT_TOKEN>",
     "prefix" : "!", 
     "nasa_key" : "<YOUR_NASA_API_TOKEN>"
 }
+```
 
 To get this to work...
 
