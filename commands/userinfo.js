@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { prefix } = require('../config.json');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, db, message, args) => {
   try {
     const messageEmbed = new Discord.MessageEmbed()
       .attachFiles(['./assets/robot.png'])

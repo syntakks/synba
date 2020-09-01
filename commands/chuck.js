@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const https = require('https');
 const { prefix } = require('../config.json');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, db, message, args) => {
   https
     .get('https://api.chucknorris.io/jokes/random', (response) => {
       let data = '';

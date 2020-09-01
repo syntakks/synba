@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const { prefix } = require('../config.json');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, db, message, args) => {
   try {
     fs.readdir('./commands', (err, files) => {
       if (err) return console.error(err);

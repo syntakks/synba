@@ -1,5 +1,14 @@
 const fs = require('fs');
-const { token, prefix } = require('./config.json');
+const {
+  token,
+  prefix,
+  dbhost,
+  dbuser,
+  dbpass,
+  dbname,
+} = require('./config.json');
+const mysql = require('mysql');
+
 const Discord = require('discord.js');
 
 const bot = new Discord.Client();
@@ -19,6 +28,19 @@ fs.readdir('./commands/', (err, files) => {
   });
 });
 
+var db = mysql.createConnection({
+  host: dbhost,
+  user: dbuser,
+  password: dbpass,
+  database: dbname,
+});
+
+db.connect((err) => {
+  if (err) throw err;
+  console.log('Connected to database!');
+  db.query('show tables', console.log);
+});
+
 bot.on('ready', async () => {
   console.log(`Logged in as ${bot.user.tag}!`);
   let link = await bot.generateInvite(['ADMINISTRATOR']);
@@ -36,7 +58,7 @@ bot.on('message', async (message) => {
   if (!command.startsWith(prefix)) return;
 
   let commandModule = bot.commands.get(command.slice(prefix.length));
-  if (commandModule) commandModule.run(bot, message, args);
+  if (commandModule) commandModule.run(bot, db, message, args);
 });
 
 bot.on('messageDelete', async (message) => {

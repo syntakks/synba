@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const { prefix } = require('../config.json');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, db, message, args) => {
   if (message.channel.type === 'dm')
     return message.reply('This is a dm message...');
   try {

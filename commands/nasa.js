@@ -2,7 +2,7 @@ const Discord = require('discord.js');
 const https = require('https');
 const { prefix, nasa_key } = require('../config.json');
 
-module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, db, message, args) => {
   https
     .get(
       `https://api.nasa.gov/planetary/apod?api_key=${nasa_key}`,
