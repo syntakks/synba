@@ -57,6 +57,14 @@ module.exports.run = async (bot, db, message, args) => {
     if (args[0] === 'get-project') {
     }
 
+    if (args[0] === 'delete-project') {
+      if (args[1]) {
+        await deleteProject(db, messageEmbed, message, args);
+      } else {
+        message.reply('You must specify a project to delete!');
+      }
+    }
+
     // list
     // !werk list projects  # Shows list of all projects for that user.
     // !werk list projects like <ProjectNameQuery>   # List all projects like the query.
@@ -108,6 +116,39 @@ async function newProject(db, messageEmbed, message, args) {
           'https://media3.giphy.com/media/mIZ9rPeMKefm0/200.gif'
         );
         messageEmbed.setFooter(`${prefix}werk Created New Project`);
+        messageEmbed.setTimestamp();
+        // Send the reply
+        message.reply(messageEmbed);
+      }
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteProject(db, messageEmbed, message, args) {
+  try {
+    // Delete the project row
+    await db.query('DELETE FROM `projects` WHERE `id` = ?', args[1], function (
+      error,
+      results,
+      fields
+    ) {
+      if (error) {
+        message.reply(error.sqlMessage);
+      } else {
+        messageEmbed.addField('Project ID:', args[1]);
+        messageEmbed.setDescription(`DELETE Project...`);
+        messageEmbed.addField('Deleted Row(s):', results.affectedRows);
+        messageEmbed.addField(
+          'Deleted by:',
+          `${message.author.username}#${message.author.discriminator}`,
+          true
+        );
+        messageEmbed.setImage(
+          'https://media.tenor.com/images/60150adbdc2e9e4110b1f30e4cc5f289/tenor.gif'
+        );
+        messageEmbed.setFooter(`${prefix}werk DELETE Project`);
         messageEmbed.setTimestamp();
         // Send the reply
         message.reply(messageEmbed);
