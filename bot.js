@@ -18,12 +18,12 @@ fs.readdir('./commands/', (err, files) => {
   if (err) return console.error(err);
 
   let jsfiles = files.filter((f) => f.split('.').pop() === 'js');
-  console.log('jsfiles', jsfiles);
+  //console.log('jsfiles', jsfiles);
   if (jsfiles.length < 1) return console.log('No commands to load!');
 
   jsfiles.forEach((f, i) => {
     let props = require(`./commands/${f}`);
-    console.log(`${i + 1}: ${f} loaded!`);
+    //console.log(`${i + 1}: ${f} loaded!`);
     bot.commands.set(props.help.name, props);
   });
 });
@@ -38,7 +38,7 @@ var db = mysql.createConnection({
 db.connect((err) => {
   if (err) throw err;
   console.log('Connected to database!');
-  db.query('show tables', console.log);
+  //db.query('show tables', console.log);
 });
 
 bot.on('ready', async () => {
