@@ -5,6 +5,7 @@ const { prefix } = require('../config.json');
 // !werk project new <projectName> start  # Creates new Project, creates ProjectUser entry with owner role and new Session right now.
 // !werk project edit <projectID> name <name> String
 // !werk project edit <projectID> completed <completed> Datetime
+// !werk project delete <projectID>  # Delete project by ID.
 // !werk project addUser <projectID> <username/mention> role <roleID> # Adds user to project. Optional role, default to team.
 // !werk project editUser <projectID> <username/mention> <roleID>  #Edit user role for project.
 // !werk project kickUser <projectID> <username/mention>  # Remove user from project.
@@ -21,6 +22,8 @@ module.exports.handle = async (db, messageEmbed, message, args) => {
       }
     case 'list':
       return await listProjects(db, messageEmbed, message, args);
+    case 'delete':
+      return await deleteProject(db, messageEmbed, message, args);
   }
 
   async function newProject(db, messageEmbed, message, args) {
@@ -130,29 +133,66 @@ module.exports.handle = async (db, messageEmbed, message, args) => {
 
   async function deleteProject(db, messageEmbed, message, args) {
     try {
-      // Delete the project row
-      await db.query(
-        'DELETE FROM `projects` WHERE `id` = ?',
-        args[1],
-        function (error, results, fields) {
-          if (error) {
-            message.reply(error.sqlMessage);
-          } else {
-            messageEmbed.addField('Project ID:', args[1]);
-            messageEmbed.setDescription(`DELETE Project...`);
-            messageEmbed.addField('Deleted Row(s):', results.affectedRows);
-            messageEmbed.addField(
-              'Deleted by:',
-              `${message.author.username}#${message.author.discriminator}`,
-              true
-            );
-            messageEmbed.setFooter(`${prefix}werk DELETE Project`);
-            messageEmbed.setTimestamp();
-            // Send the reply
-            message.reply(messageEmbed);
-          }
+      let projectID = args[2];
+      let sql = `SELECT * from project join project_user on project.projectID = project_user.projectID where project_user.userID = '${getAuthorUsername(
+        message
+      )}' and project_user.roleID = 1 and project.projectID = '${projectID}'`;
+      console.log(sql);
+      // See if we have a row to delete
+      db.beginTransaction(function (err) {
+        if (err) {
+          throw err;
         }
-      );
+
+        db.query(sql, function (error, results, fields) {
+          if (error) {
+            return db.rollback(function () {
+              throw error;
+            });
+          }
+          console.log('predeleteresult: ', results);
+          if (results.length < 1) {
+            return message.reply('No record found...');
+          }
+          let data = results[0];
+          let project = { projectID: data.projectID, name: data.name };
+
+          var log = 'Post ' + results.insertId + ' added';
+
+          db.query(
+            'DELETE FROM `project` WHERE `projectID` = ?',
+            project.projectID,
+            function (error, results, fields) {
+              if (error) {
+                return db.rollback(function () {
+                  throw error;
+                });
+              }
+              db.commit(function (err) {
+                if (err) {
+                  return db.rollback(function () {
+                    throw err;
+                  });
+                }
+                console.log('success!');
+                messageEmbed.addField('Project ID:', project.projectID);
+                messageEmbed.addField('Project Name:', project.name);
+                messageEmbed.setDescription(`DELETE Project...`);
+                messageEmbed.addField('Deleted Row(s):', results.affectedRows);
+                messageEmbed.addField(
+                  'Deleted by:',
+                  `${message.author.username}#${message.author.discriminator}`,
+                  true
+                );
+                messageEmbed.setFooter(`${prefix}werk DELETE Project`);
+                messageEmbed.setTimestamp();
+                // Send the reply
+                message.reply(messageEmbed);
+              });
+            }
+          );
+        });
+      });
     } catch (error) {
       console.error(error);
     }
